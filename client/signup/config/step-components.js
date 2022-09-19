@@ -18,6 +18,7 @@ const stepNameToModuleName = {
 	'domains-link-in-bio-tld': 'domains',
 	'domains-store': 'domains',
 	'domains-theme-preselected': 'domains',
+	'domains-plugin-preselected': 'domains',
 	'mailbox-domain': 'domains',
 	emails: 'emails',
 	mailbox: 'emails',
