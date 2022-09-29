@@ -384,6 +384,18 @@ export function generateSteps( {
 			},
 		},
 
+		'plans-plugin': {
+			stepName: 'plans-plugin',
+			apiRequestFunction: addPlanToCart,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
+			fulfilledStepCallback: isPlanFulfilled,
+			props: {
+				hideFreePlan: true,
+				planTypes: [ TYPE_BUSINESS, TYPE_ECOMMERCE ],
+			},
+		},
+
 		'plans-store-nux': {
 			stepName: 'plans-store-nux',
 			apiRequestFunction: addPlanToCart,
@@ -486,9 +498,16 @@ export function generateSteps( {
 		},
 
 		'domains-plugin-preselected': {
-			stepName: 'domains-theme-preselected',
+			stepName: 'domains-plugin-preselected',
 			apiRequestFunction: createSiteWithCart,
-			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'pluginItem' ],
+			providesDependencies: [
+				'siteId',
+				'siteSlug',
+				'domainItem',
+				'pluginItem',
+				'themeItem',
+				'shouldHideFreePlan',
+			],
 			optionalDependencies: [ 'pluginItem' ],
 			props: {
 				isDomainOnly: false,
