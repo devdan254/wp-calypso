@@ -387,12 +387,13 @@ export function generateSteps( {
 		'plans-plugin': {
 			stepName: 'plans-plugin',
 			apiRequestFunction: addPlanToCart,
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItem' ],
-			fulfilledStepCallback: isPlanFulfilled,
+			dependencies: [ 'siteSlug', 'pluginSlug', 'pluginItem' ],
+			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
+			optionalDependencies: [ 'pluginItem' ],
 			props: {
 				hideFreePlan: true,
 				planTypes: [ TYPE_BUSINESS, TYPE_ECOMMERCE ],
+				themeSlugWithRepo: 'pub/twentytwentytwo',
 			},
 		},
 

@@ -276,7 +276,6 @@ class DomainsStep extends Component {
 			  } )
 			: undefined;
 
-		// const pluginItem = pick( this.props.marketplacePlugin || undefined, 'product_slug' );
 		const pluginItem = this.props.marketplacePlugin;
 
 		suggestion && this.props.submitDomainStepSelection( suggestion, this.getAnalyticsSection() );

@@ -18,9 +18,9 @@ import { apiCloseAccount } from '../shared';
 
 declare const browser: Browser;
 
-describe( DataHelper.createSuiteTitle( 'Plugins: free plugin, Business plan' ), function () {
-	const planName = 'Business';
-	const pluginSlug = 'wp-job-manager';
+describe( DataHelper.createSuiteTitle( 'Plugins: paid plugin, eCommerce plan' ), function () {
+	const planName = 'eCommerce';
+	const pluginSlug = 'wordpress-seo-premium';
 	const testUser = DataHelper.getNewTestUser( {
 		usernamePrefix: 'plugin',
 	} );
@@ -50,7 +50,7 @@ describe( DataHelper.createSuiteTitle( 'Plugins: free plugin, Business plan' ), 
 
 		it( 'Start the onboarding process', async function () {
 			await page.waitForNavigation( {
-				url: DataHelper.getCalypsoURL( '/start/with-plugin', { pluginSlug } ),
+				url: DataHelper.getCalypsoURL( '/start/with-plugin', { pluginSlug, period: 'MONTHLY' } ),
 			} );
 		} );
 
@@ -87,18 +87,17 @@ describe( DataHelper.createSuiteTitle( 'Plugins: free plugin, Business plan' ), 
 			await cartCheckoutPage.enterPaymentDetails( DataHelper.getTestPaymentDetails() );
 		} );
 
+		it( 'Agree the third-party privacy policy', async function () {
+			await page.click( 'label[class*="CheckboxTermsWrapper"]' );
+		} );
+
 		it( 'Make purchase', async function () {
 			await cartCheckoutPage.purchase();
 		} );
 
-		it( 'Install plugin', async function () {
+		it( 'Post-checkout page', async function () {
 			await page.waitForNavigation( {
-				url: `**/marketplace/${ pluginSlug }/auto-install/**`,
-				timeout: 120 * 1000,
-			} );
-
-			await page.waitForNavigation( {
-				url: `**/marketplace/thank-you/${ pluginSlug }/**`,
+				url: `**/thank-you/**`,
 				timeout: 120 * 1000,
 			} );
 		} );
@@ -107,7 +106,7 @@ describe( DataHelper.createSuiteTitle( 'Plugins: free plugin, Business plan' ), 
 	describe( 'Validate the result', function () {
 		it( 'Make sure the site is a .wpcomstaging.com', async function () {
 			// Sometimes it takes time to update the site URL.
-			await page.waitForTimeout( 5000 );
+			await page.waitForTimeout( 3000 );
 
 			await page.goto( DataHelper.getCalypsoURL( '/home' ) );
 			await page.waitForNavigation( { url: '**/home/**' } );
