@@ -3,11 +3,13 @@
  */
 
 import {
+	BrowserManager,
 	DataHelper,
 	DomainSearchComponent,
 	UserSignupPage,
 	CartCheckoutPage,
 	PlansPage,
+	PluginsPage,
 	NewUserResponse,
 	RestAPIClient,
 } from '@automattic/calypso-e2e';
@@ -18,7 +20,7 @@ declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'Plugins: a custom domain, a free plugin' ), function () {
 	const planName = 'Business';
-	const pluginSlug = 'wordpress-seo';
+	const pluginSlug = 'wp-job-manager';
 	const testUser = DataHelper.getNewTestUser( {
 		usernamePrefix: 'plugin',
 	} );
@@ -29,12 +31,27 @@ describe( DataHelper.createSuiteTitle( 'Plugins: a custom domain, a free plugin'
 	let newUserDetails: NewUserResponse;
 
 	beforeAll( async () => {
-		page = await browser.newPage();
+		// Because many button/link selectors depden on label texts,
+		// we need to make sure the locale is set to English.
+		const context = await browser.newContext( { locale: 'en-US' } );
+		page = await context.newPage();
 	} );
 
-	describe( 'Signup via /start/with-plugin', function () {
-		it( 'Navigate to /start/with-plugin', async function () {
-			await page.goto( DataHelper.getCalypsoURL( '/start/with-plugin/en', { pluginSlug } ) );
+	it( 'Set store cookie and locale', async function () {
+		await BrowserManager.setStoreCookie( page );
+	} );
+
+	describe( 'Signup from logged-out plugins page', function () {
+		it( 'Navigate to the plugin details page', async function () {
+			const pluginsPage = new PluginsPage( page );
+			await pluginsPage.visitPage( pluginSlug );
+			await pluginsPage.clickStartOnboarding();
+		} );
+
+		it( 'Start the onboarding process', async function () {
+			await page.waitForNavigation( {
+				url: DataHelper.getCalypsoURL( '/start/with-plugin', { pluginSlug } ),
+			} );
 		} );
 
 		it( 'Search for a domain', async function () {
@@ -84,6 +101,19 @@ describe( DataHelper.createSuiteTitle( 'Plugins: a custom domain, a free plugin'
 				url: `**/marketplace/thank-you/${ pluginSlug }/**`,
 				timeout: 120 * 1000,
 			} );
+		} );
+	} );
+
+	describe( 'Validate the result', function () {
+		it( 'Make sure the site is a .wpcomstaging.com', async function () {
+			// Sometimes it takes time to update the site URL.
+			await page.waitForTimeout( 3000 );
+
+			await page.goto( DataHelper.getCalypsoURL( '/home' ) );
+			await page.waitForNavigation( { url: '**/home/**' } );
+
+			const siteUrl = page.url();
+			expect( siteUrl ).toContain( '.wpcomstaging.com' );
 		} );
 	} );
 
