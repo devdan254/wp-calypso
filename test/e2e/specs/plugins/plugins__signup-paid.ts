@@ -18,7 +18,7 @@ import { apiCloseAccount } from '../shared';
 
 declare const browser: Browser;
 
-describe( DataHelper.createSuiteTitle( 'Plugins: paid plugin, eCommerce plan' ), function () {
+describe( DataHelper.createSuiteTitle( 'Plugins: Signup with a paid plugin' ), function () {
 	const planName = 'eCommerce';
 	const pluginSlug = 'wordpress-seo-premium';
 	const testUser = DataHelper.getNewTestUser( {

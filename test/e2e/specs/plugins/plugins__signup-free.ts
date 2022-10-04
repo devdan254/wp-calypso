@@ -18,7 +18,7 @@ import { apiCloseAccount } from '../shared';
 
 declare const browser: Browser;
 
-describe( DataHelper.createSuiteTitle( 'Plugins: free plugin, Business plan' ), function () {
+describe( DataHelper.createSuiteTitle( 'Plugins: Signup with a free plugin' ), function () {
 	const planName = 'Business';
 	const pluginSlug = 'wp-job-manager';
 	const testUser = DataHelper.getNewTestUser( {
