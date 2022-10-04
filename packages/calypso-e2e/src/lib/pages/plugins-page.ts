@@ -49,7 +49,7 @@ const selectors = {
 	// Plugin details view
 	pluginDetailsHeaderTitle: ( section: string ) =>
 		`.plugin-details-header__name:text("${ section }")`,
-	startButton: 'a:has-text("Start with this plugin")',
+	loggedOutStartButton: 'a:has-text("Start with this plugin")',
 };
 
 /**
@@ -358,6 +358,6 @@ export class PluginsPage {
 	 * Clicks on the 'Start with this plugin' button.
 	 */
 	async clickStartOnboarding(): Promise< void > {
-		await this.page.click( selectors.startButton );
+		await this.page.click( selectors.loggedOutStartButton );
 	}
 }

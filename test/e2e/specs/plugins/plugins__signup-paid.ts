@@ -1,13 +1,13 @@
 /**
- * @group quarantined
+ * @group calypso-release
  */
 
 import {
 	BrowserManager,
 	DataHelper,
-	DomainSearchComponent,
 	UserSignupPage,
 	CartCheckoutPage,
+	SignupDomainPage,
 	PlansPage,
 	PluginsPage,
 	NewUserResponse,
@@ -21,17 +21,17 @@ declare const browser: Browser;
 describe( DataHelper.createSuiteTitle( 'Plugins: Signup with a paid plugin' ), function () {
 	const planName = 'eCommerce';
 	const pluginSlug = 'wordpress-seo-premium';
+	const pluginTitle = 'Yoast SEO Premium';
 	const testUser = DataHelper.getNewTestUser( {
 		usernamePrefix: 'plugin',
 	} );
 
 	let page: Page;
-	let domainSearchComponent: DomainSearchComponent;
 	let cartCheckoutPage: CartCheckoutPage;
 	let newUserDetails: NewUserResponse;
 
 	beforeAll( async () => {
-		// Because many button/link selectors depden on label texts,
+		// Because many button/link selectors depend on label texts,
 		// we need to make sure the locale is set to English.
 		const context = await browser.newContext( { locale: 'en-US' } );
 		page = await context.newPage();
@@ -54,13 +54,9 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Signup with a paid plugin' ), f
 			} );
 		} );
 
-		it( 'Search for a domain', async function () {
-			domainSearchComponent = new DomainSearchComponent( page );
-			await domainSearchComponent.search( testUser.username );
-		} );
-
-		it( 'Select a free domain', async function () {
-			await domainSearchComponent.selectDomain( '.wordpress.com' );
+		it( 'Skip domain selection', async function () {
+			const signupDomainPage = new SignupDomainPage( page );
+			await signupDomainPage.skipDomainSelection();
 		} );
 
 		it( `Select WordPress.com ${ planName } plan`, async function () {
@@ -80,6 +76,11 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Signup with a paid plugin' ), f
 		it( 'See secure checkout', async function () {
 			cartCheckoutPage = new CartCheckoutPage( page );
 			await cartCheckoutPage.validateCartItem( `WordPress.com ${ planName }` );
+		} );
+
+		it( 'Have both the plan and the plugin in the cart', async function () {
+			await cartCheckoutPage.validateCartItem( `WordPress.com ${ planName }` );
+			await cartCheckoutPage.validateCartItem( pluginTitle );
 		} );
 
 		it( 'Enter credit card details', async function () {
