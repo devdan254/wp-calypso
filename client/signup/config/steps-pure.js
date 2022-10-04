@@ -389,7 +389,7 @@ export function generateSteps( {
 			apiRequestFunction: addPlanToCart,
 			dependencies: [ 'siteSlug', 'pluginSlug', 'pluginItem' ],
 			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
-			optionalDependencies: [ 'pluginItem' ],
+			optionalDependencies: [ 'pluginItem', 'themeSlugWithRepo' ],
 			props: {
 				hideFreePlan: true,
 				planTypes: [ TYPE_BUSINESS, TYPE_ECOMMERCE ],
