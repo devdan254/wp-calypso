@@ -1003,7 +1003,7 @@ object CalypsoPreReleaseDashboard : BuildType({
 	dependencies {
 		artifacts (KPIDashboardTests) {
 			artifactRules = """
-				allure-results.tgz!*.json => allure-results
+				allure-results.tgz => allure-results
 			"""
 		}
 	}
@@ -1017,15 +1017,49 @@ object CalypsoPreReleaseDashboard : BuildType({
 
 	steps {
 		bashNodeScript {
-			name = "Install AWS CLI"
+			name = "Install dependencies"
 			scriptContent = """
-				ls -la %teamcity.build.checkoutDir%/bin/
-				curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" \
-				unzip awscliv2.zip \
+				curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+				unzip awscliv2.zip
 				sudo ./aws/install
 
-				aws --version
+				npm install allure-commandline
 
+				aws --version
+				allure --version
+			""".trimIndent()
+			dockerImage = "%docker_image_e2e%"
+		}
+
+		bashNodeScript {
+			name = "Download previous report"
+			scriptContent = """
+				mkdir %teamcity.build.checkoutDir%/previous_allure_report
+				aws s3 cp %CALYPSO_E2E_DASHBOARD_AWS_S3_ROOT%/ %teamcity.build.checkoutDir%/allure-results/previous_allure_report
+
+				export FIRST_RUN=false
+				if [ -z "$(ls -A %teamcity.build.checkoutDir%/previous_allure_report)" ]; then
+					echo "Previous report not found."
+					export FIRST_RUN=true
+				else
+					echo "Found previous report."
+				fi
+			""".trimIndent()
+			dockerImage = "%docker_image_e2e%"
+		}
+
+		bashNodeScript {
+			name = "Process Allure results data"
+			scriptContent = """
+			ls -la %teamcity.build.checkoutDir%/allure-results
+			ls -la %teamcity.build.checkoutDir%/previous_allure_report
+
+			mkdir %teamcity.build.checkoutDir%/new_allure_report
+			allure generate %teamcity.build.checkoutDir%/allure-results -o %teamcity.build.checkoutDir%/new_allure_report
+
+			aws s3 cp %teamcity.build.checkoutDir%/new_allure_report/* %CALYPSO_E2E_DASHBOARD_AWS_S3_ROOT%
+
+			echo "Done"
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
 		}
