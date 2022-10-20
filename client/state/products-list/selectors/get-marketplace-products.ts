@@ -3,7 +3,9 @@ import type { ProductListItem } from './get-products-list';
 import type { AppState } from 'calypso/types';
 
 export function getMarketplaceProducts( state: AppState, searchSlug: string ): ProductListItem[] {
-	if ( ! searchSlug ) return [];
+	if ( ! searchSlug ) {
+		return [];
+	}
 
 	const productsList = getProductsList( state );
 	const entries = Object.entries( productsList ).filter(
