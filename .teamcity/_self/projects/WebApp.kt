@@ -885,10 +885,10 @@ object KPIDashboardTests : BuildType({
 	name = "Test build for KPI Dashboard project"
 	description = "Test build configuration for KPI dashboard."
 	artifactRules = """
-		logs.tgz => logs.tgz
+		logs => logs.tgz
 		screenshots => screenshots
 		trace => trace
-		allure-results.tgz => allure-results.tgz
+		allure-results => allure-results.tgz
 	""".trimIndent()
 
 	vcs {
@@ -951,13 +951,13 @@ object KPIDashboardTests : BuildType({
 				find test/e2e/results -type f \( -iname \*.webm -o -iname \*.png \) -print0 | xargs -r -0 mv -t screenshots
 
 				mkdir -p logs
-				find test/e2e/results -name '*.log' -print0 | xargs -r -0 tar cvfz logs.tgz
+				find test/e2e/results -name '*.log' -print0 | xargs -r -0 mv -t logs
 
 				mkdir -p trace
 				find test/e2e/results -name '*.zip' -print0 | xargs -r -0 mv -t trace
 
 				mkdir -p allure-results
-				find test/e2e/allure-results -name '*.json' -print0 | xargs -r -0 tar cvfz allure-results.tgz
+				find test/e2e/allure-results -name '*.json' -print0 | xargs -r -0 mv -t allure-results
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
 		}
@@ -1003,7 +1003,7 @@ object CalypsoPreReleaseDashboard : BuildType({
 	dependencies {
 		artifacts (KPIDashboardTests) {
 			artifactRules = """
-				allure-results.tgz => allure-results
+				allure-results.tgz!/*.json => allure-results
 			"""
 		}
 		snapshot ( KPIDashboardTests) {
@@ -1025,46 +1025,64 @@ object CalypsoPreReleaseDashboard : BuildType({
 				unzip awscliv2.zip
 				sudo ./aws/install
 
-				npm install allure-commandline
+				curl -L "https://github.com/allure-framework/allure2/releases/download/2.19.0/allure_2.19.0-1_all.deb" -o "allure.deb"
+
+				sudo apt update
+				set +e
+				sudo apt install ./allure.deb -yf
+				set -e
 
 				aws --version
 				allure --version
-			""".trimIndent()
-			dockerImage = "%docker_image_e2e%"
-		}
 
-		bashNodeScript {
-			name = "Download previous report"
-			scriptContent = """
-				mkdir %teamcity.build.checkoutDir%/previous_allure_report
-				aws s3 cp %CALYPSO_E2E_DASHBOARD_AWS_S3_ROOT%/ %teamcity.build.checkoutDir%/allure-results/previous_allure_report
+				# -------
+
+				aws configure set aws_access_key_id %CALYPSO_E2E_DASHBOARD_AWS_S3_ACCESS_KEY_ID%
+				aws configure set aws_secret_access_key %CALYPSO_E2E_DASHBOARD_AWS_S3_SECRET_ACCESS_KEY%
 
 				export FIRST_RUN=false
-				if [ -z "$(ls -A %teamcity.build.checkoutDir%/previous_allure_report)" ]; then
+				if [ "$(aws s3 ls %CALYPSO_E2E_DASHBOARD_AWS_S3_ROOT% | wc -l)" -eq "0" ]; then
 					echo "Previous report not found."
 					export FIRST_RUN=true
 				else
 					echo "Found previous report."
+					mkdir %teamcity.build.checkoutDir%/previous_allure_report
+					aws s3 cp %CALYPSO_E2E_DASHBOARD_AWS_S3_ROOT%/ %teamcity.build.checkoutDir%/allure-results/previous_allure_report --recursive
 				fi
+
+				# Currently unused
+				if [ -z "$(ls -A %teamcity.build.checkoutDir%/previous_allure_report)" ]; then
+
+				else
+
+				fi
+
+				# -------
+				mkdir %teamcity.build.checkoutDir%/new_allure_report
+				allure generate %teamcity.build.checkoutDir%/allure-results -o %teamcity.build.checkoutDir%/new_allure_report
+
+				aws s3 cp %teamcity.build.checkoutDir%/new_allure_report %CALYPSO_E2E_DASHBOARD_AWS_S3_ROOT% --recursive
+
+				echo "Done"
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
 		}
 
-		bashNodeScript {
-			name = "Process Allure results data"
-			scriptContent = """
-			ls -la %teamcity.build.checkoutDir%/allure-results
-			ls -la %teamcity.build.checkoutDir%/previous_allure_report
+		// bashNodeScript {
+		// 	name = "Download previous report"
+		// 	scriptContent = """
 
-			mkdir %teamcity.build.checkoutDir%/new_allure_report
-			allure generate %teamcity.build.checkoutDir%/allure-results -o %teamcity.build.checkoutDir%/new_allure_report
+		// 	""".trimIndent()
+		// 	dockerImage = "%docker_image_e2e%"
+		// }
 
-			aws s3 cp %teamcity.build.checkoutDir%/new_allure_report/* %CALYPSO_E2E_DASHBOARD_AWS_S3_ROOT%
+		// bashNodeScript {
+		// 	name = "Process Allure results data"
+		// 	scriptContent = """
 
-			echo "Done"
-			""".trimIndent()
-			dockerImage = "%docker_image_e2e%"
-		}
+		// 	""".trimIndent()
+		// 	dockerImage = "%docker_image_e2e%"
+		// }
 	}
 })
 
