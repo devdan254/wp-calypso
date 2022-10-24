@@ -1050,7 +1050,7 @@ object CalypsoPreReleaseDashboard : BuildType({
 				mkdir %teamcity.build.checkoutDir%/new_allure_report
 				allure generate %teamcity.build.checkoutDir%/allure-results -o %teamcity.build.checkoutDir%/new_allure_report
 
-				aws s3 cp %teamcity.build.checkoutDir%/new_allure_report %CALYPSO_E2E_DASHBOARD_AWS_S3_ROOT% --recursive
+				aws s3 sync %teamcity.build.checkoutDir%/new_allure_report %CALYPSO_E2E_DASHBOARD_AWS_S3_ROOT% --delete
 
 				echo "Done"
 			""".trimIndent()
