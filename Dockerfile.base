@@ -130,10 +130,8 @@ FROM base as ci-allure
 
 # RUN ls -la .
 RUN apt-get update && \
-	apt-get install -y --no-install-recommends software-properties-common awscli
-
-RUN apt-add-repository ppa:qameta/allure && \
-	apt-get update && \
-	apt-get install allure
+	# apt-get install -y --no-install-recommends software-properties-common awscli
+	apt-get install -y --no-install-recommends awscli openjdk-17-jre && \
+	npm install -g allure-commandline
 
 ENTRYPOINT [ "/bin/bash" ]
