@@ -995,6 +995,10 @@ object CalypsoPreReleaseDashboard : BuildType({
 	name = "Calypso Pre-Release Dashboard"
 	description = "Generate Dashboard for Pre-Release Tests"
 
+	params {
+		param("docker_image", "registry.a8c.com/calypso/ci-allure:latest")
+	}
+
 	vcs {
 		root(Settings.WpCalypso)
 		cleanCheckout = false
@@ -1019,21 +1023,6 @@ object CalypsoPreReleaseDashboard : BuildType({
 		bashNodeScript {
 			name = "Install dependencies"
 			scriptContent = """
-				curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-				unzip awscliv2.zip
-				sudo ./aws/install
-
-				curl -L "https://github.com/allure-framework/allure2/releases/download/2.19.0/allure_2.19.0-1_all.deb" -o "allure.deb"
-
-				sudo apt update
-				set +e
-				sudo apt install ./allure.deb -yf
-				set -e
-
-				aws --version
-				allure --version
-
-				# -------
 
 				aws configure set aws_access_key_id %CALYPSO_E2E_DASHBOARD_AWS_S3_ACCESS_KEY_ID%
 				aws configure set aws_secret_access_key %CALYPSO_E2E_DASHBOARD_AWS_S3_SECRET_ACCESS_KEY%
@@ -1063,8 +1052,25 @@ object CalypsoPreReleaseDashboard : BuildType({
 
 				echo "Done"
 			""".trimIndent()
-			dockerImage = "%docker_image_e2e%"
+			dockerImage = "%docker_image_allure%"
 		}
+
+			// curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+			// 	unzip awscliv2.zip
+			// 	sudo ./aws/install
+
+			// 	curl -L "https://github.com/allure-framework/allure2/releases/download/2.19.0/allure_2.19.0-1_all.deb" -o "allure.deb"
+
+			// 	sudo apt update
+			// 	set +e
+			// 	sudo apt install ./allure.deb -yf
+			// 	set -e
+
+			// 	aws --version
+			// 	allure --version
+
+			// 	# -------
+
 
 		// bashNodeScript {
 		// 	name = "Download previous report"
