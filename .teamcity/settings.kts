@@ -189,6 +189,8 @@ object BuildBaseImages : BuildType({
 					registry.a8c.com/calypso/ci-e2e:%build.number%
 					registry.a8c.com/calypso/ci-wpcom:%image_tag%
 					registry.a8c.com/calypso/ci-wpcom:%build.number%
+					registry.a8c.com/calypso/ci-allure:%image_tag%
+					registry.a8c.com/calypso/ci-allure:%build.number%
 				""".trimIndent()
 			}
 		}

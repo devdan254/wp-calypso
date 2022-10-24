@@ -968,9 +968,6 @@ object KPIDashboardTests : BuildType({
 		}
 	}
 
-	// By default, no triggers are defined for this template class.
-	triggers {}
-
 	failureConditions {
 		executionTimeoutMin = 20
 		// Don't fail if the runner exists with a non zero code. This allows a build to pass if the failed tests have been muted previously.
@@ -1010,12 +1007,14 @@ object CalypsoPreReleaseDashboard : BuildType({
 				allure-results.tgz!/*.json => allure-results
 			"""
 		}
+		snapshot (KPIDashboardTests) {
+			synchronizeRevisions = true
+		}
 	}
 
 	triggers {
 		finishBuildTrigger {
-			buildType = "calypso_WebApp_Calypso_E2E_KPI_Dashboard"
-			branchFilter = "+:trunk"
+	    	buildType = "calypso_WebApp_Calypso_E2E_KPI_Dashboard"
 		}
 	}
 
@@ -1034,21 +1033,17 @@ object CalypsoPreReleaseDashboard : BuildType({
 				else
 					echo "Found previous report."
 					mkdir %teamcity.build.checkoutDir%/previous_allure_report
-					aws s3 cp %CALYPSO_E2E_DASHBOARD_AWS_S3_ROOT%/ %teamcity.build.checkoutDir%/allure-results/previous_allure_report --recursive
-				fi
-
-				# Currently unused
-				if [ -z "$(ls -A %teamcity.build.checkoutDir%/previous_allure_report)" ]; then
-
-				else
-
+					aws s3 sync %CALYPSO_E2E_DASHBOARD_AWS_S3_ROOT%/ %teamcity.build.checkoutDir%/previous_allure_report
 				fi
 
 				# -------
 				mkdir %teamcity.build.checkoutDir%/new_allure_report
+				# Copy history trend from previous run
+				cp -R %teamcity.build.checkoutDir%/previous_allure_report/history %teamcity.build.checkoutDir%/allure-results
+				# Generate report
 				allure generate %teamcity.build.checkoutDir%/allure-results -o %teamcity.build.checkoutDir%/new_allure_report
 
-				aws s3 cp %teamcity.build.checkoutDir%/new_allure_report %CALYPSO_E2E_DASHBOARD_AWS_S3_ROOT% --recursive
+				aws s3 sync %teamcity.build.checkoutDir%/new_allure_report %CALYPSO_E2E_DASHBOARD_AWS_S3_ROOT% --delete
 
 				echo "Done"
 			""".trimIndent()
