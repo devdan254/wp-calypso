@@ -1040,11 +1040,11 @@ object CalypsoPreReleaseDashboard : BuildType({
 				fi
 
 				# Currently unused
-				if [ -z "$(ls -A %teamcity.build.checkoutDir%/previous_allure_report)" ]; then
+				#if [ -z "$(ls -A %teamcity.build.checkoutDir%/previous_allure_report)" ]; then
 
-				else
+				#else
 
-				fi
+				#fi
 
 				# -------
 				mkdir %teamcity.build.checkoutDir%/new_allure_report
