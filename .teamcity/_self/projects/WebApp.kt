@@ -968,8 +968,12 @@ object KPIDashboardTests : BuildType({
 		}
 	}
 
-	// By default, no triggers are defined for this template class.
-	triggers {}
+	triggers {
+		finishBuildTrigger {
+			buildType = "calypso_WebApp_Calypso_Dashboard_Pre_Release_Dashboard"
+			branchFilter = "+:trunk"
+		}
+	}
 
 	failureConditions {
 		executionTimeoutMin = 20
@@ -1011,13 +1015,6 @@ object CalypsoPreReleaseDashboard : BuildType({
 			"""
 		}
 		snapshot ( KPIDashboardTests) {
-		}
-	}
-
-	triggers {
-		finishBuildTrigger {
-	    	buildType = "KPIDashboardTests"
-			branchFilter = "+:trunk"
 		}
 	}
 
