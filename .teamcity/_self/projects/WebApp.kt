@@ -968,12 +968,6 @@ object KPIDashboardTests : BuildType({
 		}
 	}
 
-	triggers {
-		vcs {
-			perCheckinTriggering = true
-		}
-	}
-
 	failureConditions {
 		executionTimeoutMin = 20
 		// Don't fail if the runner exists with a non zero code. This allows a build to pass if the failed tests have been muted previously.
@@ -1013,13 +1007,13 @@ object CalypsoPreReleaseDashboard : BuildType({
 				allure-results.tgz!/*.json => allure-results
 			"""
 		}
-		snapshot ( KPIDashboardTests) {
-		}
+		// snapshot ( KPIDashboardTests) {
+		// }
 	}
 
 	triggers {
-		vcs {
-			perCheckinTriggering = true
+		finishBuildTrigger {
+	    	buildType = "calypso_WebApp_Calypso_E2E_KPI_Dashboard"
 		}
 	}
 
