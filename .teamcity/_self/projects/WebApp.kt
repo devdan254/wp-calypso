@@ -969,9 +969,8 @@ object KPIDashboardTests : BuildType({
 	}
 
 	triggers {
-		finishBuildTrigger {
-			buildType = "calypso_WebApp_Calypso_Dashboard_Pre_Release_Dashboard"
-			branchFilter = "+:trunk"
+		vcs {
+			perCheckinTriggering = true
 		}
 	}
 
@@ -1015,6 +1014,12 @@ object CalypsoPreReleaseDashboard : BuildType({
 			"""
 		}
 		snapshot ( KPIDashboardTests) {
+		}
+	}
+
+	triggers {
+		vcs {
+			perCheckinTriggering = true
 		}
 	}
 
