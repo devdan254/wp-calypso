@@ -1036,18 +1036,14 @@ object CalypsoPreReleaseDashboard : BuildType({
 				else
 					echo "Found previous report."
 					mkdir %teamcity.build.checkoutDir%/previous_allure_report
-					aws s3 cp %CALYPSO_E2E_DASHBOARD_AWS_S3_ROOT%/ %teamcity.build.checkoutDir%/allure-results/previous_allure_report --recursive
+					aws s3 sync %CALYPSO_E2E_DASHBOARD_AWS_S3_ROOT%/ %teamcity.build.checkoutDir%/previous_allure_report
 				fi
-
-				# Currently unused
-				#if [ -z "$(ls -A %teamcity.build.checkoutDir%/previous_allure_report)" ]; then
-
-				#else
-
-				#fi
 
 				# -------
 				mkdir %teamcity.build.checkoutDir%/new_allure_report
+				# Copy history trend from previous run
+				cp -R %teamcity.build.checkoutDir%/previous_allure_report/history %teamcity.build.checkoutDir%/allure-results
+				# Generate report
 				allure generate %teamcity.build.checkoutDir%/allure-results -o %teamcity.build.checkoutDir%/new_allure_report
 
 				aws s3 sync %teamcity.build.checkoutDir%/new_allure_report %CALYPSO_E2E_DASHBOARD_AWS_S3_ROOT% --delete
