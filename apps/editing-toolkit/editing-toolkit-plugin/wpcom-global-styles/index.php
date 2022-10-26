@@ -34,9 +34,7 @@ function wpcom_should_limit_global_styles( $blog_id = 0 ) {
 		return false;
 	}
 
-	// During the development stage, we only limit Global Styles on sites that have opted in. This
-	// is a temporary check that will be removed as part of the public launch.
-	return has_blog_sticker( 'wpcom-limit-global-styles', $blog_id );
+	return true;
 }
 
 /**
