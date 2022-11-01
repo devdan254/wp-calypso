@@ -1007,8 +1007,9 @@ object CalypsoPreReleaseDashboard : BuildType({
 				allure-results.tgz!/*.json => allure-results
 			"""
 		}
-		// snapshot ( KPIDashboardTests) {
-		// }
+		snapshot (KPIDashboardTests) {
+			synchronizeRevisions = true
+		}
 	}
 
 	triggers {
