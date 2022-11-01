@@ -39,6 +39,11 @@ object WebApp : Project({
 	buildType(KPIDashboardTests)
 	buildType(CalypsoPreReleaseDashboard)
 	buildType(QuarantinedE2ETests)
+
+		sequential {
+			buildType(KPIDashboardTests)
+			buildType(CalypsoPreReleaseDashboard)
+		}
 })
 
 object BuildDockerImage : BuildType({
@@ -1007,16 +1012,16 @@ object CalypsoPreReleaseDashboard : BuildType({
 				allure-results.tgz!/*.json => allure-results
 			"""
 		}
-		snapshot (KPIDashboardTests) {
-			synchronizeRevisions = true
-		}
+		// snapshot (KPIDashboardTests) {
+		// 	synchronizeRevisions = true
+		// }
 	}
 
-	triggers {
-		finishBuildTrigger {
-	    	buildType = "calypso_WebApp_Calypso_E2E_KPI_Dashboard"
-		}
-	}
+	// triggers {
+	// 	finishBuildTrigger {
+	//     	buildType = "calypso_WebApp_Calypso_E2E_KPI_Dashboard"
+	// 	}
+	// }
 
 	steps {
 		bashNodeScript {
