@@ -966,7 +966,7 @@ object KPIDashboardTests : BuildType({
 			name = "Upload Allure results to S3"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
-				set -x
+				set -ex
 
 				aws configure set aws_access_key_id %CALYPSO_E2E_DASHBOARD_AWS_S3_ACCESS_KEY_ID%
 				aws configure set aws_secret_access_key %CALYPSO_E2E_DASHBOARD_AWS_S3_SECRET_ACCESS_KEY%
@@ -975,7 +975,7 @@ object KPIDashboardTests : BuildType({
 
 				aws s3 sync %build.counter%-%build.vcs.number%.tgz %CALYPSO_E2E_DASHBOARD_AWS_S3_ROOT%
 			""".trimIndent()
-			dockerImage = "%docker_image_e2e%"
+			dockerImage = "%docker_image_allure%"
 		}
 
 		bashNodeScript {
