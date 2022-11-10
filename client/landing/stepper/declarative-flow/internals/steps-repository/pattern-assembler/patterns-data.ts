@@ -164,5 +164,3 @@ const sectionPatterns: Pattern[] = [
 		name: 'List of events',
 	},
 ];
-
-export { headerPatterns, footerPatterns, sectionPatterns };

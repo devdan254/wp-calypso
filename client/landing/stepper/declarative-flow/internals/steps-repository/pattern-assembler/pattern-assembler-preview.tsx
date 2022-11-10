@@ -24,6 +24,9 @@ interface Props {
 	scrollToSelector: string | null;
 }
 
+/**
+ * TODO: Migrate to use `@automattic/blocks-renderer` to render selected patterns
+ */
 const PatternAssemblerPreview = ( { header, sections = [], footer, scrollToSelector }: Props ) => {
 	const locale = useLocale();
 	const translate = useTranslate();
@@ -42,7 +45,7 @@ const PatternAssemblerPreview = ( { header, sections = [], footer, scrollToSelec
 			// of the content.
 			pattern_ids: [ header, ...sections, footer ]
 				.filter( Boolean )
-				.map( ( pattern ) => encodePatternId( pattern!.id ) ),
+				.map( ( pattern ) => encodePatternId( pattern!.ID ) ),
 		},
 	} as Design;
 
