@@ -1,6 +1,6 @@
 import type { Pattern } from './types';
 
-const headerPatterns: Pattern[] = [
+export const headerPatterns: Pattern[] = [
 	{
 		id: 5579,
 		name: 'Centered header',
@@ -43,7 +43,7 @@ const headerPatterns: Pattern[] = [
 	},
 ];
 
-const footerPatterns: Pattern[] = [
+export const footerPatterns: Pattern[] = [
 	{
 		id: 5316,
 		name: 'Footer with social icons, address, e-mail, and telephone number',
@@ -82,7 +82,7 @@ const footerPatterns: Pattern[] = [
 	},
 ];
 
-const sectionPatterns: Pattern[] = [
+export const sectionPatterns: Pattern[] = [
 	{
 		id: 7156,
 		name: 'Media and text with image on the right',
