@@ -66,6 +66,7 @@ import {
 	isExternallyManagedTheme as getIsExternallyManagedTheme,
 	isSiteEligibleForManagedExternalThemes as getIsSiteEligibleForManagedExternalThemes,
 } from 'calypso/state/themes/selectors';
+import { getIsLoadingCart } from 'calypso/state/themes/selectors/get-is-loading-cart';
 import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import ThemeDownloadCard from './theme-download-card';
@@ -663,14 +664,21 @@ class ThemeSheet extends Component {
 		const label = this.getDefaultOptionLabel();
 		const price = this.renderPrice();
 		const placeholder = <span className="theme__sheet-button-placeholder">loading......</span>;
-		const { isActive } = this.props;
+		const { isActive, isExternallyManagedTheme } = this.props;
+		const { isLoading } = this.props;
 
 		return (
 			<Button
 				className="theme__sheet-primary-button"
-				href={ getUrl ? getUrl( this.props.id ) : null }
+				href={
+					getUrl &&
+					( ! isExternallyManagedTheme || ! config.isEnabled( 'themes/third-party-premium' ) )
+						? getUrl( this.props.id )
+						: null
+				}
 				onClick={ this.onButtonClick }
 				primary
+				disabled={ isLoading }
 				target={ isActive ? '_blank' : null }
 			>
 				{ this.isLoaded() ? label : placeholder }
@@ -828,10 +836,13 @@ class ThemeSheet extends Component {
 					description={ preventWidows( this.getBannerUpsellDescription() ) }
 					event="themes_plan_particular_free_with_plan"
 					feature={ WPCOM_FEATURES_PREMIUM_THEMES }
-					forceHref={ true }
+					forceHref={ ! isExternallyManagedTheme }
+					disableHref={ isExternallyManagedTheme }
+					onClick={ isExternallyManagedTheme ? this.onButtonClick : null }
 					href={ plansUrl }
 					showIcon={ true }
 					forceDisplay={ forceDisplay }
+					displayAsLink={ isExternallyManagedTheme }
 				/>
 			);
 		}
@@ -957,6 +968,12 @@ const ThemeSheetWithOptions = ( props ) => {
 		defaultOption = 'upgradePlan';
 	} else if ( isExternallyManagedTheme && ! isSiteEligibleForManagedExternalThemes ) {
 		defaultOption = 'upgradePlanForExternallyManagedThemes';
+	} else if (
+		isExternallyManagedTheme &&
+		isSiteEligibleForManagedExternalThemes &&
+		! isPurchased
+	) {
+		defaultOption = 'subscribe';
 	} else if ( isPremium && ! isPurchased && ! isBundledSoftwareSet ) {
 		defaultOption = 'purchase';
 	} else if ( isPremium && ! isPurchased && isBundledSoftwareSet ) {
@@ -1028,6 +1045,7 @@ export default connect(
 				state,
 				siteId
 			),
+			isLoading: getIsLoadingCart( state ),
 		};
 	},
 	{
