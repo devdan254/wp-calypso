@@ -1,3 +1,4 @@
+import { encodePatternId } from './utils';
 import type { Pattern } from './types';
 
 export const headerPatterns: Pattern[] = [
@@ -164,3 +165,7 @@ export const sectionPatterns: Pattern[] = [
 		name: 'List of events',
 	},
 ];
+
+export const allPatterns = [ ...headerPatterns, ...footerPatterns, ...sectionPatterns ].map(
+	( pattern ) => encodePatternId( pattern.id )
+);
