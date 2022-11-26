@@ -92,7 +92,7 @@ export function getItemVariantCompareToPrice(
 	// or 10 (per month). In this case, selecting the variant would save the user
 	// 50% (5 / 10).
 	const compareToPriceForVariantTerm = compareTo
-		? compareTo.pricePerMonth * variant.termIntervalInMonths
+		? ( compareTo.price / compareTo.termIntervalInMonths ) * variant.termIntervalInMonths
 		: undefined;
 	return compareToPriceForVariantTerm;
 }
@@ -119,9 +119,13 @@ export const ItemVariantPrice: FunctionComponent< {
 	const discountPercentage = getItemVariantDiscountPercentage( variant, compareTo );
 	const formattedCurrentPrice = formatCurrency( variant.price, variant.currency, {
 		stripZeros: true,
+		isSmallestUnit: true,
 	} );
 	const formattedCompareToPriceForVariantTerm = compareToPriceForVariantTerm
-		? formatCurrency( compareToPriceForVariantTerm, variant.currency, { stripZeros: true } )
+		? formatCurrency( compareToPriceForVariantTerm, variant.currency, {
+				stripZeros: true,
+				isSmallestUnit: true,
+		  } )
 		: undefined;
 
 	return (
