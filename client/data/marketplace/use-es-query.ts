@@ -100,6 +100,10 @@ const mapIndexResultsToPluginData = ( results: ESHits ): Plugin[] => {
 			last_updated: hit.modified,
 			short_description: hit.plugin.excerpt, // TODO: add localization
 			icon: createIconUrl( hit.slug, hit.plugin.icons ),
+			variations: {
+				monthly: { product_id: hit.plugin.store_product_monthly_id },
+				yearly: { product_id: hit.plugin.store_product_yearly_id },
+			},
 			railcar,
 		};
 
@@ -131,7 +135,7 @@ export const getESPluginsInfiniteQueryParams = (
 		search( {
 			query: searchTerm,
 			author,
-			groupId: 'marketplace',
+			groupId: 'woocommerce',
 			category: options.category,
 			pageHandle: pageParam + '',
 			pageSize,
