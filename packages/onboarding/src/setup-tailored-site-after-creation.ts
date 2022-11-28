@@ -3,7 +3,12 @@ import { Site, Onboard } from '@automattic/data-stores';
 import { select, dispatch } from '@wordpress/data';
 import wpcomRequest from 'wpcom-proxy-request';
 import { uploadAndSetSiteLogo } from './upload-and-set-site-logo';
-import { isLinkInBioFlow, isNewsletterOrLinkInBioFlow, LINK_IN_BIO_FLOW } from './utils';
+import {
+	isLinkInBioFlow,
+	isNewsletterOrLinkInBioFlow,
+	LINK_IN_BIO_FLOW,
+	isFreeFlow,
+} from './utils';
 
 const ONBOARD_STORE = Onboard.register();
 const SITE_STORE = Site.register( { client_id: '', client_secret: '' } );
@@ -74,7 +79,7 @@ export function setupSiteAfterCreation( { siteId, flowName }: SetupOnboardingSit
 	};
 
 	const setLaunchpadScreen = ( siteId: number, flow: string ) => {
-		if ( isNewsletterOrLinkInBioFlow( flow ) ) {
+		if ( isNewsletterOrLinkInBioFlow( flow ) || isFreeFlow( flow ) ) {
 			return saveSiteSettings( siteId, {
 				launchpad_screen: 'full',
 			} );
