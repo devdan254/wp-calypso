@@ -117,8 +117,6 @@ const FlowSwitch: React.FC< { user: UserStore.CurrentUser | undefined } > = ( { 
 
 	user && receiveCurrentUser( user as UserStore.CurrentUser );
 
-	// console.log(flow);
-	// return;
 	return <FlowRenderer flow={ flow } />;
 };
 interface AppWindow extends Window {
