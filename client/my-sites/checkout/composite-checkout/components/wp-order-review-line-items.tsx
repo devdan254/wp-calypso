@@ -13,15 +13,12 @@ import {
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
 import { hasDIFMProduct } from 'calypso/lib/cart-values/cart-items';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import {
-	canVariantBePurchased,
 	getVariantPlanProductSlugs,
 	useGetProductVariants,
 } from 'calypso/my-sites/checkout/composite-checkout/hooks/product-variants';
-import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
 import { ItemVariationPicker } from './item-variation-picker';
 import type { OnChangeItemVariant } from './item-variation-picker';
 import type { Theme } from '@automattic/composite-checkout';
@@ -58,7 +55,6 @@ export function WPOrderReviewSection( {
 
 export function WPOrderReviewLineItems( {
 	className,
-	siteId,
 	isSummary,
 	removeProductFromCart,
 	removeCoupon,
@@ -71,7 +67,6 @@ export function WPOrderReviewLineItems( {
 	onRemoveProductCancel,
 }: {
 	className?: string;
-	siteId?: number | undefined;
 	isSummary?: boolean;
 	removeProductFromCart?: RemoveProductFromCart;
 	removeCoupon: RemoveCouponFromCart;
@@ -100,7 +95,6 @@ export function WPOrderReviewLineItems( {
 				<LineItemWrapper
 					key={ product.product_slug }
 					product={ product }
-					siteId={ siteId }
 					isSummary={ isSummary }
 					removeProductFromCart={ removeProductFromCart }
 					onChangePlanLength={ onChangePlanLength }
@@ -147,7 +141,6 @@ export function WPOrderReviewLineItems( {
 
 function LineItemWrapper( {
 	product,
-	siteId,
 	isSummary,
 	removeProductFromCart,
 	onChangePlanLength,
@@ -162,7 +155,6 @@ function LineItemWrapper( {
 	initialVariantTerm,
 }: {
 	product: ResponseCartProduct;
-	siteId?: number | undefined;
 	isSummary?: boolean;
 	removeProductFromCart?: RemoveProductFromCart;
 	onChangePlanLength?: OnChangeItemVariant;
@@ -190,14 +182,7 @@ function LineItemWrapper( {
 		isJetpackPurchasableItem( product.product_slug )
 	);
 
-	const sitePlans = useSelector( ( state ) => getPlansBySiteId( state, siteId ) );
-	const activePlan = sitePlans?.data?.find( ( plan ) => plan.currentPlan );
-
 	const variants = useGetProductVariants( product, ( variant ) => {
-		if ( ! canVariantBePurchased( variant, activePlan?.interval, activePlan?.productSlug ) ) {
-			return false;
-		}
-
 		// Only show term variants which are equal to or longer than the variant that
 		// was in the cart when checkout finished loading (not necessarily the
 		// current variant). For WordPress.com only, not Jetpack. See
