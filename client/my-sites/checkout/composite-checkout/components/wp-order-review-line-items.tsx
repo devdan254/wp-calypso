@@ -15,10 +15,7 @@ import styled from '@emotion/styled';
 import { useState } from 'react';
 import { hasDIFMProduct } from 'calypso/lib/cart-values/cart-items';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
-import {
-	getVariantPlanProductSlugs,
-	useGetProductVariants,
-} from 'calypso/my-sites/checkout/composite-checkout/hooks/product-variants';
+import { useGetProductVariants } from 'calypso/my-sites/checkout/composite-checkout/hooks/product-variants';
 import { ItemVariationPicker } from './item-variation-picker';
 import type { OnChangeItemVariant } from './item-variation-picker';
 import type { Theme } from '@automattic/composite-checkout';
@@ -108,8 +105,9 @@ export function WPOrderReviewLineItems( {
 					isDisabled={ isDisabled }
 					initialVariantTerm={
 						initialProducts.find( ( initialProduct ) => {
-							const variants = getVariantPlanProductSlugs( initialProduct.product_slug );
-							return variants.includes( product.product_slug );
+							return initialProduct.product_variants.find(
+								( variant ) => variant.product_id === product.product_id
+							);
 						} )?.months_per_bill_period
 					}
 				/>
