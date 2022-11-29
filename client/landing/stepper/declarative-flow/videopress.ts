@@ -15,7 +15,7 @@ import SiteOptions from './internals/steps-repository/site-options';
 import VideomakerSetup from './internals/steps-repository/videomaker-setup';
 import type { Flow, ProvidedDependencies } from './internals/types';
 
-export const videopress: Flow = {
+const videopress: Flow = {
 	name: VIDEOPRESS_FLOW,
 	get title() {
 		return translate( 'Video' );
@@ -167,3 +167,5 @@ export const videopress: Flow = {
 		return { goNext, goBack, goToStep, submit };
 	},
 };
+
+export default videopress;
