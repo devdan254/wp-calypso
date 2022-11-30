@@ -10,14 +10,12 @@ const debug = debugFactory( 'calypso:composite-checkout:use-record-checkout-load
 
 export default function useRecordCheckoutLoaded( {
 	isLoading,
-	isApplePayAvailable,
 	responseCart,
 	storedCards,
 	productAliasFromUrl,
 	checkoutFlow,
 }: {
 	isLoading: boolean;
-	isApplePayAvailable: boolean;
 	responseCart: ResponseCart;
 	storedCards: StoredCard[];
 	productAliasFromUrl: string | undefined | null;
@@ -31,7 +29,6 @@ export default function useRecordCheckoutLoaded( {
 			recordTracksEvent( 'calypso_checkout_page_view', {
 				saved_cards: storedCards.length,
 				is_renewal: hasRenewalItem( responseCart ),
-				apple_pay_available: isApplePayAvailable,
 				product_slug: productAliasFromUrl,
 				is_composite: true,
 				checkout_flow: checkoutFlow,
