@@ -8,7 +8,7 @@ const RadioButtonWrapper = styled.div<
 	RadioButtonWrapperProps & React.HTMLAttributes< HTMLDivElement >
 >`
 	position: relative;
-	display: ${ ( props ) => ( props.hidden ? 'none' : 'block' ) }
+	display: ${ ( props ) => ( props.hidden ? 'none' : 'block' ) };
 	margin-top: 8px;
 	border-radius: 3px;
 	box-sizing: border-box;
@@ -20,7 +20,7 @@ const RadioButtonWrapper = styled.div<
 	}
 
 	::before {
-		display: ${ ( props ) => ( props.hidden ? 'none' : 'block' ) }
+		display: ${ ( props ) => ( props.hidden ? 'none' : 'block' ) };
 		width: 100%;
 		height: 100%;
 		position: absolute;
