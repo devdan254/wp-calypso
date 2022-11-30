@@ -8,6 +8,7 @@ const RadioButtonWrapper = styled.div<
 	RadioButtonWrapperProps & React.HTMLAttributes< HTMLDivElement >
 >`
 	position: relative;
+	display: ${ ( props ) => ( props.hidden ? 'none' : 'block' ) }
 	margin-top: 8px;
 	border-radius: 3px;
 	box-sizing: border-box;
@@ -19,7 +20,7 @@ const RadioButtonWrapper = styled.div<
 	}
 
 	::before {
-		display: block;
+		display: ${ ( props ) => ( props.hidden ? 'none' : 'block' ) }
 		width: 100%;
 		height: 100%;
 		position: absolute;
@@ -173,13 +174,19 @@ export default function RadioButton( {
 	children,
 	label,
 	disabled,
+	hidden,
 	id,
 	ariaLabel,
 }: RadioButtonProps ) {
 	const [ isFocused, changeFocus ] = useState( false );
 
 	return (
-		<RadioButtonWrapper disabled={ disabled } isFocused={ isFocused } checked={ checked }>
+		<RadioButtonWrapper
+			disabled={ disabled }
+			isFocused={ isFocused }
+			checked={ checked }
+			hidden={ hidden }
+		>
 			<Radio
 				type="radio"
 				name={ name }
@@ -210,6 +217,7 @@ interface RadioButtonProps {
 	id: string;
 	label: React.ReactNode;
 	disabled?: boolean;
+	hidden?: boolean;
 	checked?: boolean;
 	value: string;
 	onChange?: () => void;
