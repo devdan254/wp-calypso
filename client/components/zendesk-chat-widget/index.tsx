@@ -2,17 +2,17 @@ import { useEffect } from 'react';
 import ZendeskChatErrorBoundary from './error-boundary';
 
 interface Props {
-	chatId: string | false;
+	chatKey: string | false;
 }
 
-const ZendeskChat = ( { chatId }: Props ) => {
+const ZendeskChat = ( { chatKey }: Props ) => {
 	useEffect( () => {
-		if ( ! chatId ) {
+		if ( ! chatKey ) {
 			return;
 		}
 
 		const script = document.createElement( 'script' );
-		script.src = 'https://static.zdassets.com/ekr/snippet.js?key=' + chatId;
+		script.src = 'https://static.zdassets.com/ekr/snippet.js?key=' + chatKey;
 		script.type = 'text/javascript';
 		script.id = 'ze-snippet';
 
@@ -20,7 +20,7 @@ const ZendeskChat = ( { chatId }: Props ) => {
 		if ( container ) {
 			container.appendChild( script );
 		}
-	}, [ chatId ] );
+	}, [ chatKey ] );
 
 	return (
 		<ZendeskChatErrorBoundary>
