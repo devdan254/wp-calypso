@@ -47,25 +47,29 @@ export function useAvailablePaymentMethodIds(): string[] {
 	return availablePaymentMethodIds;
 }
 
-export function useTogglePaymentMethod( paymentMethodId: string, available: boolean ): void {
+export function useTogglePaymentMethod(): ( paymentMethodId: string, available: boolean ) => void {
 	const { allPaymentMethods, availablePaymentMethodIds, setAvailablePaymentMethodIds } =
 		useContext( CheckoutContext );
 	if ( ! allPaymentMethods ) {
 		throw new Error( 'useTogglePaymentMethod cannot be used outside of CheckoutProvider' );
 	}
-	const paymentMethod = allPaymentMethods.find( ( { id } ) => id === paymentMethodId );
-	if ( ! paymentMethod ) {
-		debug( `No payment method found matching id '${ paymentMethodId }' in`, allPaymentMethods );
-		return;
-	}
+	return ( paymentMethodId: string, available: boolean ) => {
+		const paymentMethod = allPaymentMethods.find( ( { id } ) => id === paymentMethodId );
+		if ( ! paymentMethod ) {
+			debug( `No payment method found matching id '${ paymentMethodId }' in`, allPaymentMethods );
+			return;
+		}
 
-	if ( available && ! availablePaymentMethodIds.includes( paymentMethodId ) ) {
-		setAvailablePaymentMethodIds( [ ...availablePaymentMethodIds, paymentMethodId ] );
-	}
+		if ( available && ! availablePaymentMethodIds.includes( paymentMethodId ) ) {
+			debug( 'Adding available payment method', paymentMethodId );
+			setAvailablePaymentMethodIds( [ ...availablePaymentMethodIds, paymentMethodId ] );
+		}
 
-	if ( ! available && availablePaymentMethodIds.includes( paymentMethodId ) ) {
-		setAvailablePaymentMethodIds(
-			availablePaymentMethodIds.filter( ( id ) => id !== paymentMethodId )
-		);
-	}
+		if ( ! available && availablePaymentMethodIds.includes( paymentMethodId ) ) {
+			debug( 'Removing available payment method', paymentMethodId );
+			setAvailablePaymentMethodIds(
+				availablePaymentMethodIds.filter( ( id ) => id !== paymentMethodId )
+			);
+		}
+	};
 }
