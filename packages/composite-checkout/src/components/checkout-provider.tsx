@@ -76,8 +76,9 @@ export function CheckoutProvider( {
 		initiallySelectedPaymentMethodId
 	);
 
+	useResetAvailablePaymentMethodWhenListChanges( paymentMethods, setAvailablePaymentMethodIds );
 	useResetSelectedPaymentMethodWhenListChanges(
-		paymentMethods,
+		availablePaymentMethodIds,
 		initiallySelectedPaymentMethodId,
 		setPaymentMethodId
 	);
@@ -238,26 +239,39 @@ function useCallEventCallbacks( {
 }
 
 function useResetSelectedPaymentMethodWhenListChanges(
-	paymentMethods: PaymentMethod[],
+	availablePaymentMethodIds: string[],
 	initiallySelectedPaymentMethodId: string | null,
 	setPaymentMethodId: ( id: string | null ) => void
 ) {
-	const [ prevPaymentMethods, setPrevPaymentMethods ] = useState< PaymentMethod[] >( [] );
+	const hashKey = availablePaymentMethodIds.join( '-_-' );
+	const previousKey = useRef< string >();
+
 	useEffect( () => {
-		const paymentMethodIds = paymentMethods.map( ( x ) => x?.id );
-		const prevPaymentMethodIds = prevPaymentMethods.map( ( x ) => x?.id );
-		const paymentMethodsChanged =
-			paymentMethodIds.some( ( x ) => ! prevPaymentMethodIds.includes( x ) ) ||
-			prevPaymentMethodIds.some( ( x ) => ! paymentMethodIds.includes( x ) );
-		if ( paymentMethodsChanged ) {
+		if ( previousKey.current !== hashKey ) {
 			debug(
 				'paymentMethods changed; setting payment method to initial selection ',
-				initiallySelectedPaymentMethodId,
-				'from',
-				paymentMethods
+				initiallySelectedPaymentMethodId
 			);
-			setPrevPaymentMethods( paymentMethods );
+
+			previousKey.current = hashKey;
 			setPaymentMethodId( initiallySelectedPaymentMethodId );
 		}
-	}, [ setPaymentMethodId, paymentMethods, prevPaymentMethods, initiallySelectedPaymentMethodId ] );
+	}, [ hashKey, setPaymentMethodId, initiallySelectedPaymentMethodId ] );
+}
+
+function useResetAvailablePaymentMethodWhenListChanges(
+	paymentMethods: PaymentMethod[],
+	setAvailablePaymentMethodIds: ( ids: string[] ) => void
+) {
+	const hashKey = paymentMethods.map( ( method ) => method.id ).join( '-_-' );
+	const previousKey = useRef< string >();
+
+	useEffect( () => {
+		if ( previousKey.current !== hashKey ) {
+			debug( 'paymentMethods changed; setting available payment methods to all available' );
+
+			previousKey.current = hashKey;
+			setAvailablePaymentMethodIds( paymentMethods.map( ( method ) => method.id ) );
+		}
+	}, [ hashKey, setAvailablePaymentMethodIds, paymentMethods ] );
 }
