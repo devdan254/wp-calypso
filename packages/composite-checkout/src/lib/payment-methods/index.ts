@@ -38,6 +38,14 @@ export function useAllPaymentMethods() {
 	return allPaymentMethods;
 }
 
+export function useAvailablePaymentMethodIds(): string[] {
+	const { availablePaymentMethodIds } = useContext( CheckoutContext );
+	if ( ! availablePaymentMethodIds?.length ) {
+		throw new Error( 'useAvailablePaymentMethodIds cannot be used outside of CheckoutProvider' );
+	}
+	return availablePaymentMethodIds;
+}
+
 export function useTogglePaymentMethod( paymentMethodId: string, available: boolean ): void {
 	const { allPaymentMethods, availablePaymentMethodIds, setAvailablePaymentMethodIds } =
 		useContext( CheckoutContext );
