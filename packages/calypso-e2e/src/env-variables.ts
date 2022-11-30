@@ -11,7 +11,7 @@ const defaultEnvVariables: SupportedEnvVariables = {
 	TEST_LOCALES: [ ...MAG16_LOCALES ],
 	HEADLESS: false,
 	SLOW_MO: 0,
-	TIMEOUT: 10000,
+	TIMEOUT: 15000,
 	GUTENBERG_EDGE: false,
 	COBLOCKS_EDGE: false,
 	AUTHENTICATE_ACCOUNTS: [ 'simpleSitePersonalPlanUser', 'eCommerceUser', 'defaultUser' ],
