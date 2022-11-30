@@ -70,24 +70,12 @@ export function CheckoutProvider( {
 	const [ paymentMethodId, setPaymentMethodId ] = useState< string | null >(
 		initiallySelectedPaymentMethodId
 	);
-	const [ prevPaymentMethods, setPrevPaymentMethods ] = useState< PaymentMethod[] >( [] );
-	useEffect( () => {
-		const paymentMethodIds = paymentMethods.map( ( x ) => x?.id );
-		const prevPaymentMethodIds = prevPaymentMethods.map( ( x ) => x?.id );
-		const paymentMethodsChanged =
-			paymentMethodIds.some( ( x ) => ! prevPaymentMethodIds.includes( x ) ) ||
-			prevPaymentMethodIds.some( ( x ) => ! paymentMethodIds.includes( x ) );
-		if ( paymentMethodsChanged ) {
-			debug(
-				'paymentMethods changed; setting payment method to initial selection ',
-				initiallySelectedPaymentMethodId,
-				'from',
-				paymentMethods
-			);
-			setPrevPaymentMethods( paymentMethods );
-			setPaymentMethodId( initiallySelectedPaymentMethodId );
-		}
-	}, [ paymentMethods, prevPaymentMethods, initiallySelectedPaymentMethodId ] );
+
+	useResetSelectedPaymentMethodWhenListChanges(
+		paymentMethods,
+		initiallySelectedPaymentMethodId,
+		setPaymentMethodId
+	);
 
 	const [ formStatus, setFormStatus ] = useFormStatusManager(
 		Boolean( isLoading ),
@@ -239,4 +227,29 @@ function useCallEventCallbacks( {
 		}
 		prevTransactionStatus.current = transactionStatus;
 	}, [ transactionStatus, paymentMethodId, transactionLastResponse, transactionError ] );
+}
+
+function useResetSelectedPaymentMethodWhenListChanges(
+	paymentMethods: PaymentMethod[],
+	initiallySelectedPaymentMethodId: string | null,
+	setPaymentMethodId: ( id: string | null ) => void
+) {
+	const [ prevPaymentMethods, setPrevPaymentMethods ] = useState< PaymentMethod[] >( [] );
+	useEffect( () => {
+		const paymentMethodIds = paymentMethods.map( ( x ) => x?.id );
+		const prevPaymentMethodIds = prevPaymentMethods.map( ( x ) => x?.id );
+		const paymentMethodsChanged =
+			paymentMethodIds.some( ( x ) => ! prevPaymentMethodIds.includes( x ) ) ||
+			prevPaymentMethodIds.some( ( x ) => ! paymentMethodIds.includes( x ) );
+		if ( paymentMethodsChanged ) {
+			debug(
+				'paymentMethods changed; setting payment method to initial selection ',
+				initiallySelectedPaymentMethodId,
+				'from',
+				paymentMethods
+			);
+			setPrevPaymentMethods( paymentMethods );
+			setPaymentMethodId( initiallySelectedPaymentMethodId );
+		}
+	}, [ setPaymentMethodId, paymentMethods, prevPaymentMethods, initiallySelectedPaymentMethodId ] );
 }
