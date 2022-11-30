@@ -39,10 +39,11 @@ export function useAllPaymentMethods() {
 }
 
 export function useAvailablePaymentMethodIds(): string[] {
-	const { availablePaymentMethodIds } = useContext( CheckoutContext );
-	if ( ! availablePaymentMethodIds?.length ) {
+	const { allPaymentMethods, availablePaymentMethodIds } = useContext( CheckoutContext );
+	if ( ! allPaymentMethods ) {
 		throw new Error( 'useAvailablePaymentMethodIds cannot be used outside of CheckoutProvider' );
 	}
+	debug( 'Returning available payment methods', availablePaymentMethodIds );
 	return availablePaymentMethodIds;
 }
 
