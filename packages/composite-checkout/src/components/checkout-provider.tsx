@@ -22,6 +22,7 @@ import {
 } from '../types';
 import CheckoutErrorBoundary from './checkout-error-boundary';
 import TransactionStatusHandler from './transaction-status-handler';
+import type { CheckoutContextInterface } from '../lib/checkout-context';
 import type {
 	PaymentEventCallback,
 	PaymentErrorCallback,
@@ -67,6 +68,10 @@ export function CheckoutProvider( {
 		children,
 		initiallySelectedPaymentMethodId,
 	};
+	const [ availablePaymentMethodIds, setAvailablePaymentMethodIds ] = useState< string[] >(
+		paymentMethods.map( ( method ) => method.id )
+	);
+
 	const [ paymentMethodId, setPaymentMethodId ] = useState< string | null >(
 		initiallySelectedPaymentMethodId
 	);
@@ -95,9 +100,11 @@ export function CheckoutProvider( {
 		transactionLastResponse,
 	} );
 
-	const value = useMemo(
+	const value: CheckoutContextInterface = useMemo(
 		() => ( {
 			allPaymentMethods: paymentMethods,
+			availablePaymentMethodIds,
+			setAvailablePaymentMethodIds,
 			paymentMethodId,
 			setPaymentMethodId,
 			formStatus,
@@ -112,6 +119,7 @@ export function CheckoutProvider( {
 			formStatus,
 			paymentMethodId,
 			paymentMethods,
+			availablePaymentMethodIds,
 			setFormStatus,
 			transactionStatusManager,
 			paymentProcessors,
