@@ -678,14 +678,7 @@ class ThemeSheet extends Component {
 
 		const plansUrl = siteSlug ? `/plans/${ siteSlug }/?plan=value_bundle` : '/plans';
 
-		const {
-			canonicalUrl,
-			currentUserId,
-			description,
-			name: themeName,
-			seoTitle,
-			seoDescription,
-		} = this.props;
+		const { canonicalUrl, description, name: themeName, seoTitle, seoDescription } = this.props;
 
 		const title =
 			( seoTitle || themeName ) &&
