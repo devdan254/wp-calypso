@@ -678,11 +678,19 @@ class ThemeSheet extends Component {
 
 		const plansUrl = siteSlug ? `/plans/${ siteSlug }/?plan=value_bundle` : '/plans';
 
-		const { canonicalUrl, description, seoDescription, name: themeName, seoTitle } = this.props;
+		const {
+			canonicalUrl,
+			currentUserId,
+			description,
+			name: themeName,
+			seoTitle,
+			seoDescription,
+		} = this.props;
+
 		const title =
 			( seoTitle || themeName ) &&
 			translate( '%(themeName)s Theme', {
-				args: { themeName: seoTitle || themeName },
+				args: { themeName },
 			} );
 
 		const metas = [
