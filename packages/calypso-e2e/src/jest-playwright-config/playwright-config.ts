@@ -36,6 +36,7 @@ const targetDeviceOptions = getTargetDeviceOptions();
 const launchOptions: LaunchOptions = {
 	headless: envVariables.HEADLESS,
 	slowMo: envVariables.SLOW_MO,
+	timeout: envVariables.TIMEOUT, // Use same value as navigation timeout for launch timeout.
 };
 
 // Options for the BrowserContext level.
